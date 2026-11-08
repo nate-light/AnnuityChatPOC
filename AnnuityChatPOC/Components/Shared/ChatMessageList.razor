@@ -1,0 +1,93 @@
+@using AnnuityChatPOC.Domain.Conversations
+@using System.Text.RegularExpressions
+
+<section class="chat-transcript" id="@MessagesContainerId">
+    @if (Messages.Count == 0)
+    {
+        <div class="message assistant">
+            <div class="meta">Assistant</div>
+            <div class="body">Ask a question about annuities, retirement goals, or product matching.</div>
+        </div>
+    }
+    else
+    {
+        @foreach (var message in Messages)
+        {
+            var cssClass = message.Role == ConversationMessageRole.User ? "message user" : "message assistant";
+            var role = message.Role == ConversationMessageRole.User ? "You" : "Assistant";
+            <article class="@cssClass">
+                <div class="meta">@role</div>
+                <div class="body">
+                    @if (message.Role == ConversationMessageRole.Assistant)
+                    {
+                        var contentWithHighlight = BuildAssistantContentWithQuestionHighlight(message.Content);
+                        if (!string.IsNullOrEmpty(contentWithHighlight.Prefix))
+                        {
+                            <span>@contentWithHighlight.Prefix</span>
+                        }
+
+                        if (!string.IsNullOrEmpty(contentWithHighlight.Question))
+                        {
+                            <span class="assistant-question-inline">@contentWithHighlight.Question</span>
+                        }
+
+                        if (!string.IsNullOrEmpty(contentWithHighlight.Suffix))
+                        {
+                            <span>@contentWithHighlight.Suffix</span>
+                        }
+                    }
+                    else
+                    {
+                        @message.Content
+                    }
+                </div>
+            </article>
+        }
+    }
+</section>
+
+@code {
+    [Parameter]
+    public required IReadOnlyList<ConversationMessage> Messages { get; set; }
+
+    [Parameter]
+    public required string MessagesContainerId { get; set; }
+
+    private static AssistantContentHighlight BuildAssistantContentWithQuestionHighlight(string content)
+    {
+        var questionEnd = content.IndexOf('?');
+        if (questionEnd < 0)
+        {
+            return new AssistantContentHighlight(content, null, null);
+        }
+
+        var startSearch = content[..(questionEnd + 1)];
+        var questionStart = FindQuestionStartIndex(startSearch);
+
+        var prefix = content[..questionStart];
+        var question = content[questionStart..(questionEnd + 1)];
+        var suffix = questionEnd + 1 < content.Length ? content[(questionEnd + 1)..] : null;
+
+        return new AssistantContentHighlight(prefix, question, suffix);
+    }
+
+    private static int FindQuestionStartIndex(string contentBeforeQuestion)
+    {
+        var sentenceBoundary = contentBeforeQuestion.LastIndexOfAny(['.', '!', '\n']);
+        var sentenceStart = sentenceBoundary >= 0 ? sentenceBoundary + 1 : 0;
+        var questionSentence = contentBeforeQuestion[sentenceStart..];
+
+        var interrogativeMatch = Regex.Match(
+            questionSentence,
+            @"(\*\*)?\b(when|what|how|which|who|where|why|can|could|would|will|should|do|does|is|are)\b",
+            RegexOptions.IgnoreCase);
+        if (interrogativeMatch.Success)
+        {
+            return sentenceStart + interrogativeMatch.Index;
+        }
+
+        return sentenceStart;
+    }
+
+    private sealed record AssistantContentHighlight(string Prefix, string? Question, string? Suffix);
+}

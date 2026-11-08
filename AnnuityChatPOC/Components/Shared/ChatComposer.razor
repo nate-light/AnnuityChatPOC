@@ -1,0 +1,42 @@
+<div class="chat-composer">
+    <textarea
+        class="form-control"
+        placeholder="Type your question... (Enter to send, Shift+Enter for a new line)"
+        @bind="_message"
+        @bind:event="oninput"
+        @onkeydown="HandleKeyDown"
+        rows="3"
+        maxlength="4000"
+        disabled="@Disabled"></textarea>
+    <button class="btn btn-primary" @onclick="OnSendClicked" disabled="@(Disabled || string.IsNullOrWhiteSpace(_message))">Send</button>
+</div>
+
+@code {
+    private string _message = string.Empty;
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSend { get; set; }
+
+    private async Task HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" && !args.ShiftKey)
+        {
+            await OnSendClicked();
+        }
+    }
+
+    private async Task OnSendClicked()
+    {
+        var message = _message.TrimEnd('\r', '\n');
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        _message = string.Empty;
+        await OnSend.InvokeAsync(message);
+    }
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "productId": "MMA-TYPE-FIXED",
+    "productName": "Fixed annuities (type)",
+    "providerName": "MassMutual Ascend",
+    "category": "Fixed annuity",
+    "description": "Steady, predictable growth at a fixed rate and total protection from loss.",
+    "eligibility": {
+      "jurisdictions": [
+        "US"
+      ],
+      "distributionChannels": [
+        "Retail"
+      ],
+      "minAge": null,
+      "maxAge": null,
+      "suitabilityNotes": [
+        "Type-level catalog entry only; specific contract terms vary by state and distribution."
+      ]
+    },
+    "risks": [
+      "Growth potential may be lower than market-linked annuity types.",
+      "Surrender charges and withdrawal limitations depend on the selected contract."
+    ],
+    "restrictions": [
+      "Represents an annuity type, not a specific contract offering.",
+      "Do not present specific rates, guarantees, fees, or riders without contract-level approved data."
+    ],
+    "approvedSources": [
+      "https://www.massmutualascend.com/products"
+    ],
+    "isRecommendationEligible": true
+  },
+  {
+    "productId": "MMA-TYPE-FIXED-INDEXED",
+    "productName": "Fixed-indexed annuities (type)",
+    "providerName": "MassMutual Ascend",
+    "category": "Fixed-indexed annuity",
+    "description": "Market-linked growth and complete protection against market losses.",
+    "eligibility": {
+      "jurisdictions": [
+        "US"
+      ],
+      "distributionChannels": [
+        "Retail"
+      ],
+      "minAge": null,
+      "maxAge": null,
+      "suitabilityNotes": [
+        "Type-level catalog entry only; specific contract terms vary by state and distribution."
+      ]
+    },
+    "risks": [
+      "Index-linked crediting methods can limit upside participation.",
+      "Surrender charges and withdrawal limitations depend on the selected contract."
+    ],
+    "restrictions": [
+      "Represents an annuity type, not a specific contract offering.",
+      "Do not present specific rates, guarantees, fees, or riders without contract-level approved data."
+    ],
+    "approvedSources": [
+      "https://www.massmutualascend.com/products"
+    ],
+    "isRecommendationEligible": true
+  },
+  {
+    "productId": "MMA-TYPE-RILA",
+    "productName": "Registered index-linked annuities (type)",
+    "providerName": "MassMutual Ascend",
+    "category": "Registered index-linked annuity",
+    "description": "Market-linked growth and partial protection against market losses.",
+    "eligibility": {
+      "jurisdictions": [
+        "US"
+      ],
+      "distributionChannels": [
+        "Retail"
+      ],
+      "minAge": null,
+      "maxAge": null,
+      "suitabilityNotes": [
+        "Type-level catalog entry only; specific contract terms vary by state and distribution."
+      ]
+    },
+    "risks": [
+      "Downside protection is partial and losses can occur beyond stated protection levels.",
+      "Surrender charges and withdrawal limitations depend on the selected contract."
+    ],
+    "restrictions": [
+      "Represents an annuity type, not a specific contract offering.",
+      "Do not present specific rates, guarantees, fees, or riders without contract-level approved data."
+    ],
+    "approvedSources": [
+      "https://www.massmutualascend.com/products"
+    ],
+    "isRecommendationEligible": true
+  },
+  {
+    "productId": "MMA-TYPE-IMMEDIATE",
+    "productName": "Immediate annuities (type)",
+    "providerName": "MassMutual Ascend",
+    "category": "Immediate annuity",
+    "description": "Turn your money into a guaranteed stream of income payments that last for as long as you choose.",
+    "eligibility": {
+      "jurisdictions": [
+        "US"
+      ],
+      "distributionChannels": [
+        "Retail"
+      ],
+      "minAge": null,
+      "maxAge": null,
+      "suitabilityNotes": [
+        "Type-level catalog entry only; specific contract terms vary by state and distribution."
+      ]
+    },
+    "risks": [
+      "Immediate income annuitization can reduce liquidity and account access.",
+      "Payment options and guarantees depend on the selected contract."
+    ],
+    "restrictions": [
+      "Represents an annuity type, not a specific contract offering.",
+      "Do not present specific rates, guarantees, fees, or riders without contract-level approved data."
+    ],
+    "approvedSources": [
+      "https://www.massmutualascend.com/products"
+    ],
+    "isRecommendationEligible": true
+  }
+]

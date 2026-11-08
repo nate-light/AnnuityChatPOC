@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/AnnuityChatPOC.IntegrationTests/AnnuityChatPOC.IntegrationTests.csproj" />
+    <Project Path="tests/AnnuityChatPOC.UnitTests/AnnuityChatPOC.UnitTests.csproj" />
+  </Folder>
+  <Project Path="AnnuityChatPOC.csproj" />
+</Solution>

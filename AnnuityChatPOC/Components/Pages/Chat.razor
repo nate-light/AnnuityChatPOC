@@ -1,0 +1,118 @@
+@page "/"
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IConversationService ConversationService
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Annuity Assistant</PageTitle>
+
+<section class="chat-page">
+    <header class="chat-header">
+        <h1>Annuity Assistant (POC)</h1>
+        <button class="btn btn-outline-secondary" @onclick="NewChatAsync" disabled="@_isSending">New Chat</button>
+    </header>
+    <p class="chat-disclaimer">
+        I’m an AI assistant, not a licensed financial professional. I can explain annuities and help you explore MassMutual Ascend products, but this is educational guidance—not personalized financial advice.
+    </p>
+
+    <StatusBanner IsLoading="@_isSending" ErrorMessage="@_errorMessage" />
+    <ChatMessageList Messages="_messages" MessagesContainerId="chat-scroll-region" />
+    <ChatComposer Disabled="@_isSending" OnSend="@SendAsync" />
+</section>
+
+@code {
+    private readonly List<Domain.Conversations.ConversationMessage> _messages = [];
+    private bool _isSending;
+    private string? _errorMessage;
+    private IJSObjectReference? _module;
+
+    protected override void OnInitialized()
+    {
+        _messages.AddRange(ConversationService.GetMessages());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/chat.js");
+        }
+
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("scrollToBottom", "chat-scroll-region");
+        }
+    }
+
+    private async Task SendAsync(string message)
+    {
+        var trimmedMessage = message.Trim();
+        _errorMessage = null;
+        _isSending = true;
+
+        if (!string.IsNullOrWhiteSpace(trimmedMessage))
+        {
+            var pendingUserMessage = new Domain.Conversations.ConversationMessage
+            {
+                MessageId = Guid.NewGuid().ToString("N"),
+                SessionId = ConversationService.Session.SessionId,
+                Role = Domain.Conversations.ConversationMessageRole.User,
+                Content = trimmedMessage,
+                IsPartial = false
+            };
+            _messages.Add(pendingUserMessage);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        try
+        {
+            await foreach (var update in ConversationService.SendMessageAsync(trimmedMessage))
+            {
+                var existing = _messages.FirstOrDefault(x => x.MessageId == update.AssistantMessageId);
+                if (existing is null)
+                {
+                    _messages.Clear();
+                    _messages.AddRange(ConversationService.GetMessages());
+                }
+                else
+                {
+                    existing.Content = update.Content;
+                    existing.IsPartial = !update.IsFinal;
+                    if (update.IsError)
+                    {
+                        _errorMessage = update.Content;
+                    }
+                }
+
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _messages.Clear();
+            _messages.AddRange(ConversationService.GetMessages());
+            _isSending = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task NewChatAsync()
+    {
+        await ConversationService.NewChatAsync();
+        _messages.Clear();
+        _messages.AddRange(ConversationService.GetMessages());
+        _errorMessage = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+}
